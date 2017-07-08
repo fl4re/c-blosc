@@ -1,6 +1,6 @@
 {
   "name": "@sb/c-blosc",
-  "version": "1.6.50",
+  "version": "1.6.51",
   "description": "fl4re c-blosc",
   "repository": "https://github.com/fl4re/c-blosc",
   "private": false,
