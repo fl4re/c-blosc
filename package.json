@@ -12,8 +12,5 @@
       "artifacts",
       "artifacts/**"
     ]
-  },
-  "scripts": {
-    "install": "prades install"
   }
 }
