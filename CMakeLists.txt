@@ -3,13 +3,13 @@
 #
 # Available options:
 #
-#   BUILD_STATIC: default ON
+#   CBLOSC_BUILD_STATIC: default ON
 #       build the static version of the Blosc library
-#   BUILD_SHARED: default ON
+#   CBLOSC_BUILD_SHARED: default ON
 #       build the shared library version of the Blosc library
-#   BUILD_TESTS: default ON
+#   CBLOSC_BUILD_TESTS: default ON
 #       build test programs and generates the "test" target
-#   BUILD_BENCHMARKS: default ON
+#   CBLOSC_BUILD_BENCHMARKS: default ON
 #       build the benchmark program
 #   DEACTIVATE_AVX2: default OFF
 #       do not attempt to build with AVX2 instructions
@@ -87,14 +87,14 @@ string(REGEX REPLACE ".*#define[ \t]+BLOSC_VERSION_STRING[ \t]+\"([-0-9A-Za-z.]+
 message("Configuring for Blosc version: " ${BLOSC_VERSION_STRING})
 
 # options
-option(BUILD_STATIC
+option(CBLOSC_BUILD_STATIC
     "Build a static version of the blosc library." ON)
-option(BUILD_SHARED
-    "Build a shared library version of the blosc library." ON)
-option(BUILD_TESTS
-    "Build test programs form the blosc compression library" ON)
-option(BUILD_BENCHMARKS
-    "Build benchmark programs form the blosc compression library" ON)
+option(CBLOSC_BUILD_SHARED
+    "Build a shared library version of the blosc library." OFF)
+option(CBLOSC_BUILD_TESTS
+    "Build test programs form the blosc compression library" OFF)
+option(CBLOSC_BUILD_BENCHMARKS
+    "Build benchmark programs form the blosc compression library" OFF)
 option(DEACTIVATE_AVX2
     "Do not attempt to build with AVX2 instructions" OFF)
 option(DEACTIVATE_LZ4
@@ -108,11 +108,11 @@ option(DEACTIVATE_ZSTD
 option(PREFER_EXTERNAL_LZ4
     "Find and use external LZ4 library instead of included sources." OFF)
 option(PREFER_EXTERNAL_SNAPPY
-    "Find and use external Snappy library instead of included sources." ON)
+    "Find and use external Snappy library instead of included sources." OFF)
 option(PREFER_EXTERNAL_ZLIB
-    "Find and use external Zlib library instead of included sources." ON)
+    "Find and use external Zlib library instead of included sources." OFF)
 option(PREFER_EXTERNAL_ZSTD
-    "Find and use external Zstd library instead of included sources." ON)
+    "Find and use external Zstd library instead of included sources." OFF)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -173,14 +173,14 @@ configure_file ("blosc/config.h.in"  "blosc/config.h" )
 include_directories("${PROJECT_BINARY_DIR}/blosc/")
 
 # If the build type is not set, default to Release.
-set(BLOSC_DEFAULT_BUILD_TYPE Release)
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "No build type specified. Defaulting to '${BLOSC_DEFAULT_BUILD_TYPE}'.")
-    set(CMAKE_BUILD_TYPE ${BLOSC_DEFAULT_BUILD_TYPE} CACHE STRING
+set(BLOSC_DEFAULT_CBLOSC_BUILD_TYPE Release)
+if(NOT CMAKE_CBLOSC_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "No build type specified. Defaulting to '${BLOSC_DEFAULT_CBLOSC_BUILD_TYPE}'.")
+    set(CMAKE_CBLOSC_BUILD_TYPE ${BLOSC_DEFAULT_CBLOSC_BUILD_TYPE} CACHE STRING
         "Choose the type of build." FORCE)
 
     # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    set_property(CACHE CMAKE_CBLOSC_BUILD_TYPE PROPERTY STRINGS
         "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
@@ -252,7 +252,7 @@ endif()
 
 # flags
 # @TODO: set -Wall
-# @NOTE: -O3 is enabled in Release mode (CMAKE_BUILD_TYPE="Release")
+# @NOTE: -O3 is enabled in Release mode (CMAKE_CBLOSC_BUILD_TYPE="Release")
 
 # Set the "-msse2" build flag only if the CMAKE_C_FLAGS is not already set.
 # Probably "-msse2" should be appended to CMAKE_C_FLAGS_RELEASE.
@@ -300,14 +300,14 @@ endif()
 # subdirectories
 add_subdirectory(blosc)
 
-if(BUILD_TESTS)
+if(CBLOSC_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif(CBLOSC_BUILD_TESTS)
 
-if(BUILD_BENCHMARKS)
+if(CBLOSC_BUILD_BENCHMARKS)
     add_subdirectory(bench)
-endif(BUILD_BENCHMARKS)
+endif(CBLOSC_BUILD_BENCHMARKS)
 
 
 # uninstall target

@@ -120,7 +120,7 @@ endif (NOT DEACTIVATE_ZSTD)
 
 
 # targets
-if (BUILD_SHARED)
+if (CBLOSC_BUILD_SHARED)
     add_library(blosc_shared SHARED ${SOURCES})
     set_target_properties(blosc_shared PROPERTIES OUTPUT_NAME blosc)
     set_target_properties(blosc_shared PROPERTIES
@@ -170,7 +170,7 @@ endif(COMPILER_SUPPORT_AVX2)
 # When the option has been selected to compile the test suite,
 # compile an additional version of blosc_shared which exports
 # some normally-hidden symbols (to facilitate unit testing).
-if (BUILD_TESTS)
+if (CBLOSC_BUILD_TESTS)
     add_library(blosc_shared_testing SHARED ${SOURCES})
     set_target_properties(blosc_shared_testing PROPERTIES OUTPUT_NAME blosc_testing)
     set_property(
@@ -188,17 +188,17 @@ if (BUILD_TESTS)
     endif()
 endif()
 
-if (BUILD_SHARED)
+if (CBLOSC_BUILD_SHARED)
     target_link_libraries(blosc_shared ${LIBS})
     target_include_directories(blosc_shared PUBLIC ${BLOSC_INCLUDE_DIRS})
 endif()
 
-if (BUILD_TESTS)
+if (CBLOSC_BUILD_TESTS)
     target_link_libraries(blosc_shared_testing ${LIBS})
     target_include_directories(blosc_shared_testing PUBLIC ${BLOSC_INCLUDE_DIRS})
 endif()
 
-if(BUILD_STATIC)
+if(CBLOSC_BUILD_STATIC)
     add_library(blosc_static STATIC ${SOURCES})
     set_target_properties(blosc_static PROPERTIES OUTPUT_NAME blosc)
     if (MSVC)
@@ -206,13 +206,13 @@ if(BUILD_STATIC)
     endif()
     target_link_libraries(blosc_static ${LIBS})
     target_include_directories(blosc_static PUBLIC ${BLOSC_INCLUDE_DIRS})
-endif(BUILD_STATIC)
+endif(CBLOSC_BUILD_STATIC)
 
 # install
 if(BLOSC_INSTALL)
     install(FILES blosc.h blosc-export.h DESTINATION include COMPONENT DEV)
     install(TARGETS blosc_shared DESTINATION ${lib_dir} COMPONENT LIB)
-    if(BUILD_STATIC)
+    if(CBLOSC_BUILD_STATIC)
         install(TARGETS blosc_static DESTINATION ${lib_dir} COMPONENT DEV)
-    endif(BUILD_STATIC)
+    endif(CBLOSC_BUILD_STATIC)
 endif(BLOSC_INSTALL)
