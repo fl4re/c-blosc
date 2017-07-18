@@ -7,6 +7,7 @@ set(INTERNAL_LIBS ${PROJECT_SOURCE_DIR}/internal-complibs)
 # This makes it easier to keep the set of exported symbols the
 # same across all compilers/platforms.
 set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # includes
 set(BLOSC_INCLUDE_DIRS ${BLOSC_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
