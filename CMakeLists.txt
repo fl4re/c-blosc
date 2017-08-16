@@ -3,13 +3,13 @@
 #
 # Available options:
 #
-#   BUILD_STATIC: default ON
+#   BLOSC_BUILD_STATIC: default ON
 #       build the static version of the Blosc library
-#   BUILD_HDF5_FILTER: default OFF
+#   BLOSC_BUILD_HDF5_FILTER: default OFF
 #       build the compression filter for the HDF5 library
-#   BUILD_TESTS: default ON
+#   BLOSC_BUILD_TESTS: default ON
 #       build test programs and generates the "test" target
-#   BUILD_BENCHMARKS: default ON
+#   BLOSC_BUILD_BENCHMARKS: default ON
 #       build the benchmark program
 #   DEACTIVATE_LZ4: default OFF
 #       do not include support for the LZ4 library
@@ -66,14 +66,14 @@ string(REGEX REPLACE ".*#define[ \t]+BLOSC_VERSION_STRING[ \t]+\"([-0-9A-Za-z.]+
 message("Configuring for Blosc version: " ${BLOSC_VERSION_STRING})
 
 # options
-option(BUILD_STATIC
+option(BLOSC_BUILD_STATIC
     "Build a static version of the blosc library." ON)
-option(BUILD_HDF5_FILTER
+option(BLOSC_BUILD_HDF5_FILTER
     "Build a blosc based compression filter for the HDF5 library" OFF)
-option(BUILD_TESTS
-    "Build test programs form the blosc compression library" ON)
-option(BUILD_BENCHMARKS
-    "Build benchmark programs form the blosc compression library" ON)
+option(BLOSC_BUILD_TESTS
+    "Build test programs form the blosc compression library" OFF)
+option(BLOSC_BUILD_BENCHMARKS
+    "Build benchmark programs form the blosc compression library" OFF)
 option(DEACTIVATE_LZ4
     "Do not include support for the LZ4 library." OFF)
 option(DEACTIVATE_SNAPPY
@@ -81,7 +81,7 @@ option(DEACTIVATE_SNAPPY
 option(DEACTIVATE_ZLIB
     "Do not include support for the ZLIB library." OFF)
 option(PREFER_EXTERNAL_COMPLIBS
-    "When found, use the installed compression libs instead of included sources." ON)
+    "When found, use the installed compression libs instead of included sources." OFF)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -128,11 +128,11 @@ configure_file ("blosc/config.h.in"  "blosc/config.h" )
 include_directories("${PROJECT_BINARY_DIR}/blosc/")
 
 # force the default build type to Release.
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+if(NOT CMAKE_BLOSC_BUILD_TYPE)
+    set(CMAKE_BLOSC_BUILD_TYPE "Release" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
         FORCE)
-endif(NOT CMAKE_BUILD_TYPE)
+endif(NOT CMAKE_BLOSC_BUILD_TYPE)
 
 # Based on the target system's processor and the compiler being used,
 # set build variables indicating which hardware features can be targeted
@@ -183,7 +183,7 @@ endif()
 
 # flags
 # @TODO: set -Wall
-# @NOTE: -O3 is enabled in Release mode (CMAKE_BUILD_TYPE="Release")
+# @NOTE: -O3 is enabled in Release mode (CMAKE_BLOSC_BUILD_TYPE="Release")
 
 # Set the "-msse2" build flag only if the CMAKE_C_FLAGS is not already set.
 # Probably "-msse2" should be appended to CMAKE_C_FLAGS_RELEASE.
@@ -215,18 +215,18 @@ endif(WIN32)
 # subdirectories
 add_subdirectory(blosc)
 
-if(BUILD_TESTS)
+if(BLOSC_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif(BLOSC_BUILD_TESTS)
 
-if(BUILD_HDF5_FILTER)
+if(BLOSC_BUILD_HDF5_FILTER)
     add_subdirectory(hdf5)
-endif(BUILD_HDF5_FILTER)
+endif(BLOSC_BUILD_HDF5_FILTER)
 
-if(BUILD_BENCHMARKS)
+if(BLOSC_BUILD_BENCHMARKS)
     add_subdirectory(bench)
-endif(BUILD_BENCHMARKS)
+endif(BLOSC_BUILD_BENCHMARKS)
 
 
 # uninstall target

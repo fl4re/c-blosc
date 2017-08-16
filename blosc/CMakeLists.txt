@@ -1,9 +1,16 @@
 # a simple way to detect that we are using CMAKE
 add_definitions(-DUSING_CMAKE)
 
-set(INTERNAL_LIBS ${CMAKE_SOURCE_DIR}/internal-complibs)
+set(INTERNAL_LIBS ${PROJECT_SOURCE_DIR}/internal-complibs)
+
+# Hide symbols by default unless they're specifically exported.
+# This makes it easier to keep the set of exported symbols the
+# same across all compilers/platforms.
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # includes
+set(BLOSC_INCLUDE_DIRS ${BLOSC_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 if(NOT DEACTIVATE_LZ4)
     if (LZ4_FOUND)
         include_directories( ${LZ4_INCLUDE_DIR} )
@@ -91,6 +98,8 @@ endif(NOT DEACTIVATE_ZLIB)
 
 
 # targets
+
+if (CBLOSC_BUILD_SHARED)
 add_library(blosc_shared SHARED ${SOURCES})
 set_target_properties(blosc_shared PROPERTIES OUTPUT_NAME blosc)
 set_target_properties(blosc_shared PROPERTIES
@@ -100,7 +109,7 @@ set_target_properties(blosc_shared PROPERTIES
 if (MSVC)
 	set_target_properties (blosc_shared PROPERTIES COMPILE_FLAGS -DBLOSC_DLL_EXPORT=TRUE)
 endif(MSVC)
-
+endif()	
 if(COMPILER_SUPPORT_SSE2)
     if (MSVC)
         # MSVC targets SSE2 by default on 64-bit configurations, but not 32-bit configurations.
@@ -132,21 +141,15 @@ if(COMPILER_SUPPORT_AVX2)
         SOURCE shuffle.c
         APPEND PROPERTY COMPILE_DEFINITIONS SHUFFLE_AVX2_ENABLED)
 endif(COMPILER_SUPPORT_AVX2)
-target_link_libraries(blosc_shared ${LIBS})
 
-if(BUILD_STATIC)
+if (CBLOSC_BUILD_SHARED)
+target_link_libraries(blosc_shared ${LIBS})
+endif()
+if(BLOSC_BUILD_STATIC)
     add_library(blosc_static STATIC ${SOURCES})
     set_target_properties(blosc_static PROPERTIES OUTPUT_NAME blosc)
 	if (MSVC)
 		set_target_properties(blosc_static PROPERTIES PREFIX lib)
 	endif()
     target_link_libraries(blosc_static ${LIBS})
-endif(BUILD_STATIC)
-
-
-# install
-install(FILES blosc.h DESTINATION include COMPONENT DEV)
-install(TARGETS blosc_shared DESTINATION ${lib_dir} COMPONENT LIB)
-if(BUILD_STATIC)
-    install(TARGETS blosc_static DESTINATION ${lib_dir} COMPONENT DEV)
-endif(BUILD_STATIC)
+endif(BLOSC_BUILD_STATIC)
